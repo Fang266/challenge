@@ -85,9 +85,32 @@
 
   .badge { text-align:center; margin-top:16px; font-size:14px; color:#2b2b6b; }
   .badge .done { font-size:28px; }
+
+  .start-overlay {
+    position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:24px;
+    background: linear-gradient(160deg, #6a5cff 0%, #3b3b98 45%, #2b2b6b 100%);
+    transition: opacity .5s ease;
+  }
+  .start-overlay.hidden { opacity:0; pointer-events:none; }
+  .start-box { text-align:center; color:#fff; }
+  .start-note { font-size:46px; }
+  .start-title { font-size:28px; font-weight:800; margin:14px 0 6px; letter-spacing:2px; }
+  .start-sub { font-size:14px; opacity:.9; margin-bottom:28px; }
+  .start-box .primary { font-size:17px; padding:13px 46px; }
 </style>
 </head>
 <body>
+<audio id="bgm" src="music.mp3" loop preload="auto" playsinline webkit-playsinline></audio>
+
+<div class="start-overlay" id="startOverlay">
+  <div class="start-box">
+    <div class="start-note">🎵</div>
+    <div class="start-title">闯关挑战</div>
+    <div class="start-sub">点击进入，开启背景音乐</div>
+    <button class="primary" id="startBtn">点击进入</button>
+  </div>
+</div>
+
 <div class="app">
 
   <section id="stage1" class="stage active">
@@ -148,6 +171,19 @@ const IMAGES = {
 document.getElementById('refImg').src = IMAGES.cake;
 document.getElementById('passwordImg').src = IMAGES.password;
 document.getElementById('locationImg').src = IMAGES.location;
+
+/* ---------- 背景音乐 ---------- */
+const bgm = document.getElementById('bgm');
+const startOverlay = document.getElementById('startOverlay');
+function tryPlay() {
+  const p = bgm.play();
+  if (p && p.then) { p.catch(function () {}); }
+}
+tryPlay(); // 桌面部分浏览器可自动播放；手机基本会被阻止，需点击进入
+document.getElementById('startBtn').addEventListener('click', function () {
+  tryPlay();
+  startOverlay.classList.add('hidden');
+});
 
 /* ---------- 阶段切换 ---------- */
 const stageIds = ['stage1','stage2','stage3'];
